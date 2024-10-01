@@ -1,0 +1,41 @@
+version: '3'
+
+services:
+  db:
+    image: postgres
+    restart: always
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: julio
+      POSTGRES_PASSWORD: Jucemart55
+      POSTGRES_DB: mydbjulio
+    container_name: julpostgres
+    volumes:
+      - ./postgres:/var/lib/postgresql/data
+    networks:
+      - app-network
+
+  app:
+    container_name: nest-app
+    build: .
+    ports:
+      - "3000:3000"
+    volumes:
+      - .:/usr/src/app
+    working_dir: /usr/src/app
+    command: npm run start:dev
+    depends_on:
+      - db
+    environment:
+      DATABASE_HOST: 127.0.0.1
+      DATABASE_PORT: 5432
+      DATABASE_USER: julio
+      DATABASE_PASSWORD: Jucemart55
+      DATABASE_NAME: mydbjulio
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
